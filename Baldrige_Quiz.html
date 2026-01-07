@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health Care Performance Excellence Quiz</title>
+    <style>
+        body { font-family: sans-serif; line-height: 1.6; max-width: 800px; margin: 20px auto; padding: 20px; background-color: #f4f4f9; }
+        .quiz-container { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h1 { color: #2c3e50; text-align: center; }
+        .question { margin-bottom: 25px; display: none; }
+        .question.active { display: block; }
+        .options { list-style: none; padding: 0; }
+        .option { background: #ecf0f1; margin: 10px 0; padding: 15px; border-radius: 5px; cursor: pointer; transition: 0.3s; }
+        .option:hover { background: #dcdde1; }
+        .correct { background: #2ecc71 !important; color: white; }
+        .incorrect { background: #e74c3c !important; color: white; }
+        .rationale { margin-top: 15px; padding: 10px; background: #fff3cd; border-left: 5px solid #ffeeba; display: none; }
+        .controls { margin-top: 20px; text-align: center; }
+        button { padding: 10px 20px; font-size: 16px; cursor: pointer; border: none; border-radius: 5px; background: #3498db; color: white; }
+        #score-board { text-align: center; font-weight: bold; font-size: 20px; margin-top: 20px; display: none; }
+    </style>
+</head>
+<body>
+
+<div class="quiz-container">
+    <h1>2009–2010 Health Care Criteria Test</h1>
+    <div id="quiz-body">
+        </div>
+    <div class="controls">
+        <button id="next-btn" onclick="nextQuestion()">Start Quiz</button>
+    </div>
+    <div id="score-board"></div>
+</div>
+
+<script>
+    const quizData = [
+        {
+            q: "Which organization is responsible for managing the Baldrige National Quality Program?",
+            options: ["American Society for Quality (ASQ)", "National Institute of Standards and Technology (NIST)", "Foundation for the Malcolm Baldrige Award", "Board of Overseers"],
+            correct: 1,
+            rationale: "NIST, an agency of the U.S. Department of Commerce, manages the program. ASQ assists under contract."
+        },
+        {
+            q: "In the Baldrige framework, which category is the 'foundation' of the performance management system?",
+            options: ["Leadership", "Strategic Planning", "Measurement, Analysis, and Knowledge Management", "Results"],
+            correct: 2,
+            rationale: "Category 4 (Measurement, Analysis, and Knowledge Management) is critical to a fact-based, knowledge-driven system and serves as the foundation."
+        },
+        {
+            q: "The 'Leadership Triad' consists of which three categories?",
+            options: ["Leadership, Strategic Planning, and Customer Focus", "Workforce Focus, Process Management, and Results", "Leadership, Workforce Focus, and Results", "Customer Focus, Process Management, and Strategic Planning"],
+            correct: 0,
+            rationale: "Categories 1, 2, and 3 represent the leadership triad, emphasizing focus on patients, stakeholders, and strategy."
+        },
+        {
+            q: "What is the total number of points available in the Baldrige Health Care Criteria scoring system?",
+            options: ["500", "1,000", "1,200", "850"],
+            correct: 1,
+            rationale: "The seven categories sum to a total of 1,000 points."
+        },
+        {
+            q: "Which Criteria Category carries the highest point value?",
+            options: ["Leadership", "Results", "Process Management", "Strategic Planning"],
+            correct: 1,
+            rationale: "Category 7 (Results) is worth 450 points, emphasizing the importance of outcomes."
+        }
+        // ... You can add more questions from the list provided earlier here
+    ];
+
+    let currentQuestion = -1;
+    let score = 0;
+
+    function nextQuestion() {
+        const btn = document.getElementById('next-btn');
+        if (currentQuestion >= quizData.length - 1) {
+            showFinalScore();
+            return;
+        }
+
+        currentQuestion++;
+        btn.innerText = "Next Question";
+        renderQuestion(currentQuestion);
+    }
+
+    function renderQuestion(index) {
+        const container = document.getElementById('quiz-body');
+        const data = quizData[index];
+        container.innerHTML = `
+            <div class="question active">
+                <h3>Question ${index + 1}: ${data.q}</h3>
+                <ul class="options">
+                    ${data.options.map((opt, i) => `<li class="option" onclick="checkAnswer(${i}, ${data.correct}, this)">${opt}</li>`).join('')}
+                </ul>
+                <div class="rationale" id="rationale"><strong>Rationale:</strong> ${data.rationale}</div>
+            </div>
+        `;
+    }
+
+    function checkAnswer(selected, correct, element) {
+        const options = document.querySelectorAll('.option');
+        options.forEach(opt => opt.style.pointerEvents = 'none'); // Disable further clicks
+
+        if (selected === correct) {
+            element.classList.add('correct');
+            score++;
+        } else {
+            element.classList.add('incorrect');
+            options[correct].classList.add('correct');
+        }
+        document.getElementById('rationale').style.display = 'block';
+    }
+
+    function showFinalScore() {
+        document.getElementById('quiz-body').innerHTML = "";
+        const board = document.getElementById('score-board');
+        board.style.display = 'block';
+        board.innerHTML = `Quiz Complete! <br> Your Final Score: ${score} out of ${quizData.length}`;
+        document.getElementById('next-btn').style.display = 'none';
+    }
+</script>
+</body>
+</html>
